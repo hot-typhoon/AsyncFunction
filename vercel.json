@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/sync.go": {
+    "api/ssh_run.go": {
       "maxDuration": 30
     }
   }
