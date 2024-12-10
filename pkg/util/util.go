@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -42,8 +43,8 @@ func ReadParamsFromQuery[T any](queryParams url.Values) (*T, error) {
 		paramName := CamelToSnake(field.Name)
 		paramValue := queryParams.Get(paramName)
 		if paramValue == "" {
-			if field.Tag.Get("sync") != "" {
-				paramValue = field.Tag.Get("sync")
+			if field.Tag.Get("query") != "" {
+				paramValue = field.Tag.Get("query")
 			} else {
 				missing = append(missing, paramName)
 			}
@@ -55,5 +56,19 @@ func ReadParamsFromQuery[T any](queryParams url.Values) (*T, error) {
 		return nil, fmt.Errorf("missing parameters: %v", missing)
 	}
 
+	return params, nil
+}
+
+func ReadParamsFromBody[T any](body io.ReadCloser) (*T, error) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	params := new(T)
+	err := json.Unmarshal(body, params)
+	if err != nil {
+		return nil, err
+	}
 	return params, nil
 }
