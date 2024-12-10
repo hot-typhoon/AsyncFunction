@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -37,30 +36,6 @@ func getStatusText(code string) string {
 	}
 }
 
-func extract(data string) (string, error) {
-	re := regexp.MustCompile(`^monitor_status\{.*?monitor_name="(.*?)".*?\}\s*(\d+)$`)
-	lines := strings.Split(data, "\n")
-	var statuses []MonitorStatus
-
-	for _, line := range lines {
-		matches := re.FindStringSubmatch(line)
-		if matches != nil {
-			name := matches[1]
-			statusCode := matches[2]
-			status := getStatusText(statusCode)
-			statuses = append(statuses, MonitorStatus{Name: name, Status: status})
-		}
-	}
-
-	jsonData, err := json.MarshalIndent(statuses, "", "  ")
-	if err != nil {
-		fmt.Println("Error encoding JSON:", err)
-		return "", err
-	}
-
-	return string(jsonData), nil
-}
-
 func getMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
 	req, err := http.NewRequest("GET", baseUrl+"/metrics", nil)
 	if err != nil {
@@ -87,6 +62,24 @@ func getMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
 	return string(data), nil
 }
 
+func extract(data string) ([]MonitorStatus, error) {
+	re := regexp.MustCompile(`^monitor_status\{.*?monitor_name="(.*?)".*?\}\s*(\d+)$`)
+	lines := strings.Split(data, "\n")
+	var statuses []MonitorStatus
+
+	for _, line := range lines {
+		matches := re.FindStringSubmatch(line)
+		if matches != nil {
+			name := matches[1]
+			statusCode := matches[2]
+			status := getStatusText(statusCode)
+			statuses = append(statuses, MonitorStatus{Name: name, Status: status})
+		}
+	}
+
+	return statuses, nil
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		util.HttpResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
@@ -105,11 +98,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonData, err := extract(data)
+	statuses, err := extract(data)
 	if err != nil {
 		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	util.HttpResponse(w, http.StatusOK, jsonData)
+	util.HttpResponse(w, http.StatusOK, statuses)
 }
