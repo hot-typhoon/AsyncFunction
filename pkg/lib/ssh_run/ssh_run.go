@@ -7,9 +7,9 @@ import (
 )
 
 type SSHMeta struct {
-	Address  string
-	Username string
-	Password string
+	Address  string `json:"address"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type BodyParams struct {
