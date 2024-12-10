@@ -53,7 +53,12 @@ func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, "Output: "+output+"; Error: "+err.Error())
+		switch err.(type) {
+		case *ssh_run.SSHError:
+			util.HttpResponse(w, http.StatusPreconditionFailed, err.Error())
+		default:
+			util.HttpResponse(w, http.StatusAccepted, "Output: "+output+"; Error: "+err.Error())
+		}
 		return
 	}
 
