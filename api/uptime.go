@@ -25,7 +25,7 @@ func HandlerUptime(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	statuses, err := uptime.Extract(data)
+	statuses, err := uptime.ExtractMetrics(data)
 	if err != nil {
 		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
 		return

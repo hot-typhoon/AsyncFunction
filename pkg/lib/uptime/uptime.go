@@ -60,7 +60,7 @@ func GetMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
 	return string(data), nil
 }
 
-func Extract(data string) ([]MonitorStatus, error) {
+func ExtractMetrics(data string) ([]MonitorStatus, error) {
 	re := regexp.MustCompile(`^monitor_status\{.*?monitor_name="(.*?)".*?\}\s*(\d+)$`)
 	lines := strings.Split(data, "\n")
 	var statuses []MonitorStatus
