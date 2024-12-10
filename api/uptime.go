@@ -76,7 +76,7 @@ func getMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", err
+		return "", fmt.Errorf("error: %v", resp.Status)
 	}
 
 	data, err := io.ReadAll(resp.Body)
