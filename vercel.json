@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/sync.go": {
+      "maxDuration": 30
+    }
+  }
+}
