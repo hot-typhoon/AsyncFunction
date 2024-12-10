@@ -45,7 +45,7 @@ func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 		case err := <-done:
 			cancel()
 			if err != nil {
-				return "", err
+				return string(output), err
 			}
 		}
 
@@ -53,7 +53,7 @@ func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
+		util.HttpResponse(w, http.StatusInternalServerError, "Output: "+output+"; Error: "+err.Error())
 		return
 	}
 
