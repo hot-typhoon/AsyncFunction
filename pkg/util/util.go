@@ -59,14 +59,14 @@ func ReadParamsFromQuery[T any](queryParams url.Values) (*T, error) {
 	return params, nil
 }
 
-func ReadParamsFromBody[T any](body io.ReadCloser) (*T, error) {
-	body, err := io.ReadAll(r.Body)
+func ReadParamsFromBody[T any](bodyReader io.ReadCloser) (*T, error) {
+	body, err := io.ReadAll(bodyReader)
 	if err != nil {
 		return nil, err
 	}
 
 	params := new(T)
-	err := json.Unmarshal(body, params)
+	err = json.Unmarshal(body, params)
 	if err != nil {
 		return nil, err
 	}
