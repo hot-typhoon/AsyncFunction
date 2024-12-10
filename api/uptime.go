@@ -61,6 +61,32 @@ func extract(data string) (string, error) {
 	return string(jsonData), nil
 }
 
+func getMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
+	req, err := http.NewRequest("GET", baseUrl+"/metrics", nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(":"+apiKey)))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", err
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		util.HttpResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
@@ -73,33 +99,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req, err := http.NewRequest("GET", params.BaseUrl+"/metrics", nil)
-	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(":"+params.ApiKey)))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		util.HttpResponse(w, resp.StatusCode, "Failed to fetch metrics")
-		return
-	}
-
-	data, err := io.ReadAll(resp.Body)
+	data, err := getMetricsFromUptime(params.BaseUrl, params.ApiKey)
 	if err != nil {
 		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	jsonData, err := extract(string(data))
+	jsonData, err := extract(data)
 	if err != nil {
 		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
 		return
