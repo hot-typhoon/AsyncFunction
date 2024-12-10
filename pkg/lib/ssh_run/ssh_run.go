@@ -57,6 +57,15 @@ func ConsumeSession(target SSHMeta, jumpers []SSHMeta, consumer func(*ssh.Sessio
 		defer client.Close()
 	}
 
+	if client == nil {
+		_client, err := ssh.Dial("tcp", target.Address, GetSSHConfig(target.Username, target.Password))
+		if err != nil {
+			return "", fmt.Errorf("failed to dial: %v", err)
+		}
+		defer _client.Close()
+		client = _client
+	}
+
 	session, err := client.NewSession()
 	if err != nil {
 		return "", fmt.Errorf("failed to create session: %v", err)
