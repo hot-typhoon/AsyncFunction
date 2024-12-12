@@ -21,13 +21,13 @@ func HandlerUptime(w http.ResponseWriter, r *http.Request) {
 
 	data, err := uptime.GetMetricsFromUptime(params.BaseUrl, params.ApiKey)
 	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
+		util.HttpResponse(w, http.StatusPreconditionFailed, err.Error())
 		return
 	}
 
 	statuses, err := uptime.ExtractMetrics(data)
 	if err != nil {
-		util.HttpResponse(w, http.StatusInternalServerError, err.Error())
+		util.HttpResponse(w, http.StatusPreconditionFailed, err.Error())
 		return
 	}
 

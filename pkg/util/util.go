@@ -1,12 +1,7 @@
 package util
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"reflect"
 	"strings"
 	"unicode"
 )
@@ -22,53 +17,19 @@ func CamelToSnake(s string) string {
 	return result.String()
 }
 
-func HttpResponse(w http.ResponseWriter, status int, message any) {
-	h := w.Header()
-
-	h.Del("Content-Length")
-	h.Set("Content-Type", "application/json")
-	h.Set("X-Content-Type-Options", "nosniff")
-
-	w.WriteHeader(status)
-	jsonResponse, _ := json.Marshal(map[string]any{"message": message})
-	w.Write([]byte(jsonResponse))
-}
-
-func ReadParamsFromQuery[T any](queryParams url.Values) (*T, error) {
-	params := new(T)
-	missing := make([]string, 0)
-	val := reflect.ValueOf(params).Elem()
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Type().Field(i)
-		paramName := CamelToSnake(field.Name)
-		paramValue := queryParams.Get(paramName)
-		if paramValue == "" {
-			if field.Tag.Get("query") != "" {
-				paramValue = field.Tag.Get("query")
-			} else {
-				missing = append(missing, paramName)
-			}
-		}
-		val.Field(i).SetString(paramValue)
+func ConvertBytesToHuman(bytes int) string {
+	units := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
+	if bytes == 0 {
+		return "0B"
 	}
 
-	if len(missing) != 0 {
-		return nil, fmt.Errorf("missing parameters: %v", missing)
+	floatBytes := float64(bytes)
+
+	var unitIndex int
+	for floatBytes >= 1024 && unitIndex < len(units)-1 {
+		floatBytes = floatBytes / 1024
+		unitIndex++
 	}
 
-	return params, nil
-}
-
-func ReadParamsFromBody[T any](bodyReader io.ReadCloser) (*T, error) {
-	body, err := io.ReadAll(bodyReader)
-	if err != nil {
-		return nil, err
-	}
-
-	params := new(T)
-	err = json.Unmarshal(body, params)
-	if err != nil {
-		return nil, err
-	}
-	return params, nil
+	return fmt.Sprintf("%.2f%s", floatBytes, units[unitIndex])
 }
