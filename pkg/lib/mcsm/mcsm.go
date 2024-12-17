@@ -106,13 +106,11 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 		return nil, err
 	}
 
-	for _, remote := range overview.Data.Remotes {
-		remotes = append(remotes, Remote{Uuid: remote.Uuid, Name: remote.Remarks, Cpu: fmt.Sprintf("%.2f", remote.CpuMemCharts[0].Cpu) + "%", Memory: fmt.Sprintf("%.2f", remote.CpuMemCharts[0].Mem) + "%"})
-	}
 	//-------------------------------------------------------------------
 
 	wg := sync.WaitGroup{}
-	for i := range remotes {
+	for i, remoteData := range overview.Data.Remotes {
+		remotes = append(remotes, Remote{Uuid: remoteData.Uuid, Name: remoteData.Remarks, Cpu: fmt.Sprintf("%.2f", remoteData.CpuMemCharts[0].Cpu) + "%", Memory: fmt.Sprintf("%.2f", remoteData.CpuMemCharts[0].Mem) + "%"})
 		for j := -1; j <= 3; j++ {
 			wg.Add(1)
 			go func(i int) {
@@ -120,7 +118,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 
 				p := url.Values{}
 				p.Add("apikey", apiKey)
-				p.Add("daemonId", remotes[i].Uuid)
+				p.Add("daemonId", remoteData.Uuid)
 				p.Add("page", "1")
 				p.Add("page_size", "10000")
 				p.Add("instance_name", "")
