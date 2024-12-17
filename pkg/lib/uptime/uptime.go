@@ -2,11 +2,11 @@ package uptime
 
 import (
 	"encoding/base64"
-	"fmt"
-	"io"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"asynclab.club/AsyncFunction/pkg/util"
 )
 
 type QueryParams struct {
@@ -35,24 +35,13 @@ func GetStatusText(code string) string {
 }
 
 func GetMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
-	req, err := http.NewRequest("GET", baseUrl+"/metrics", nil)
+	req, err := http.NewRequest(http.MethodGet, baseUrl+"/metrics", nil)
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(":"+apiKey)))
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("error: %v", resp.Status)
-	}
-
-	data, err := io.ReadAll(resp.Body)
+	data, err := util.HttpRequest(req)
 	if err != nil {
 		return "", err
 	}
