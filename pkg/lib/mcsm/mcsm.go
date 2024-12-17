@@ -70,7 +70,7 @@ type Instance struct {
 }
 
 type Remote struct {
-	Uuid        string     `json:"uuid"`
+	Uuid        string
 	CpuUsage    float64    `json:"cpu_usage"`
 	MemoryUsage float64    `json:"memory_usage"`
 	Instances   []Instance `json:"instances"`
