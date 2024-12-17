@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"net/http"
-	"time"
 
+	"asynclab.club/AsyncFunction/pkg/config"
 	"asynclab.club/AsyncFunction/pkg/lib/ssh_run"
 	"asynclab.club/AsyncFunction/pkg/util"
 	"golang.org/x/crypto/ssh"
@@ -23,7 +23,7 @@ func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 	}
 
 	output, err := ssh_run.ConsumeSession(bodyParams.Target, bodyParams.Jumpers, func(s *ssh.Session) (string, error) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
 
 		var output []byte
 		var err error
