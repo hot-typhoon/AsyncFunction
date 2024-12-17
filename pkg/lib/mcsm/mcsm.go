@@ -23,6 +23,7 @@ type JCpuMemChart struct {
 type JRemote struct {
 	Uuid         string         `json:"uuid"`
 	CpuMemCharts []JCpuMemChart `json:"cpuMemChart"`
+	Remarks      string         `json:"remarks"`
 }
 
 type JOverviewData struct {
@@ -64,13 +65,14 @@ var StatusMap = map[int]string{
 }
 
 type Instance struct {
-	Nickname string `json:"nickname"`
-	Status   string `json:"status"`
-	Players  int    `json:"players"`
+	Name    string `json:"name"`
+	Status  string `json:"status"`
+	Players int    `json:"players"`
 }
 
 type Remote struct {
-	Uuid                  string
+	Uuid                  string     `json:"-"`
+	Name                  string     `json:"name"`
 	CpuUsagePercentage    float64    `json:"cpu_usage_percentage"`
 	MemoryUsagePercentage float64    `json:"memory_usage_percentage"`
 	Instances             []Instance `json:"instances"`
@@ -105,7 +107,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 	}
 
 	for _, remote := range overview.Data.Remotes {
-		remotes = append(remotes, Remote{Uuid: remote.Uuid, CpuUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Cpu, MemoryUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Mem})
+		remotes = append(remotes, Remote{Uuid: remote.Uuid, Name: remote.Remarks, CpuUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Cpu, MemoryUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Mem})
 	}
 	//-------------------------------------------------------------------
 
@@ -142,7 +144,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 				}
 
 				for _, instance := range instances.Data.Data {
-					remotes[i].Instances = append(remotes[i].Instances, Instance{Nickname: instance.Config.Nickname, Status: StatusMap[instance.Status], Players: instance.Info.CurrentPlayers})
+					remotes[i].Instances = append(remotes[i].Instances, Instance{Name: instance.Config.Nickname, Status: StatusMap[instance.Status], Players: instance.Info.CurrentPlayers})
 				}
 			}(i)
 		}
