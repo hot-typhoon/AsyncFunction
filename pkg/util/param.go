@@ -8,6 +8,7 @@ import (
 	"reflect"
 )
 
+// TODO: tag这一块可能要添加反序列化名和反序列化列表的功能
 func ReadParamsFromQuery[T any](queryParams url.Values) (*T, error) {
 	params := new(T)
 	missing := make([]string, 0)
