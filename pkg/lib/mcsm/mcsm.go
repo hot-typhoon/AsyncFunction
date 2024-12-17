@@ -71,11 +71,11 @@ type Instance struct {
 }
 
 type Remote struct {
-	Uuid                  string     `json:"-"`
-	Name                  string     `json:"name"`
-	CpuUsagePercentage    float64    `json:"cpu_usage_percentage"`
-	MemoryUsagePercentage float64    `json:"memory_usage_percentage"`
-	Instances             []Instance `json:"instances"`
+	Uuid      string     `json:"-"`
+	Name      string     `json:"name"`
+	Cpu       string     `json:"cpu"`
+	Memory    string     `json:"memory"`
+	Instances []Instance `json:"instances"`
 }
 
 func SetRequestHeader(req *http.Request) {
@@ -107,7 +107,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 	}
 
 	for _, remote := range overview.Data.Remotes {
-		remotes = append(remotes, Remote{Uuid: remote.Uuid, Name: remote.Remarks, CpuUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Cpu, MemoryUsagePercentage: remote.CpuMemCharts[len(remote.CpuMemCharts)-1].Mem})
+		remotes = append(remotes, Remote{Uuid: remote.Uuid, Name: remote.Remarks, Cpu: fmt.Sprintf("%.2f", remote.CpuMemCharts[0].Cpu) + "%", Memory: fmt.Sprintf("%.2f", remote.CpuMemCharts[0].Mem) + "%"})
 	}
 	//-------------------------------------------------------------------
 
