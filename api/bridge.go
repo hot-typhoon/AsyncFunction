@@ -28,12 +28,6 @@ func HandlerBridge(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		vercelkit.HttpResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
 	for key, values := range resp.Header {
 		for _, value := range values {
 			w.Header().Add(key, value)
@@ -41,5 +35,10 @@ func HandlerBridge(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(resp.StatusCode)
-	w.Write(data)
+
+	_, err = io.Copy(w, resp.Body)
+	if err != nil {
+		http.Error(w, "Error while streaming response", http.StatusInternalServerError)
+		return
+	}
 }
