@@ -1,3 +1,5 @@
+github.com/dsx137/go-vercel v1.0.0 h1:Q6XX2OJtcg6Cme3ST1JVq7Qm43NM6LGcbmvl8M9KrrU=
+github.com/dsx137/go-vercel v1.0.0/go.mod h1:nd7nW/g8pWJ/x3QoLWFHQF4YzxHhq65mKaG/AXaB8xA=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 golang.org/x/crypto v0.30.0 h1:RwoQn3GkWiMkzlX562cLB7OxWvjH1L8xutO2WoJcRoY=

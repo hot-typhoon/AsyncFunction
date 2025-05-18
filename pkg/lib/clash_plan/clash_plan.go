@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"asynclab.club/AsyncFunction/pkg/util"
+	"github.com/dsx137/go-vercel/pkg/vercelkit"
 )
 
 type QueryParams struct {
@@ -46,9 +46,9 @@ func GetClashPlan(url string) (*ClashPlan, error) {
 	fmt.Sscanf(info, "upload=%d; download=%d; total=%d; expire=%d", &upload, &download, &total, &expire)
 
 	return &ClashPlan{
-		Upload:   util.ConvertBytesToHuman(upload),
-		Download: util.ConvertBytesToHuman(download),
-		Total:    util.ConvertBytesToHuman(total),
+		Upload:   vercelkit.ConvertBytesToHuman(upload),
+		Download: vercelkit.ConvertBytesToHuman(download),
+		Total:    vercelkit.ConvertBytesToHuman(total),
 		Expire:   time.Unix(int64(expire), 0).Local().Format("2006-01-02 15:04:05"),
 	}, nil
 }
