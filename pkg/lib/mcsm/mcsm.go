@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"sync"
 
-	"asynclab.club/AsyncFunction/pkg/util"
+	"github.com/dsx137/go-vercel/pkg/vercelkit"
 )
 
 type QueryParams struct {
@@ -95,7 +95,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 	}
 	SetRequestHeader(req)
 
-	data, err := util.HttpRequest(req)
+	data, err := vercelkit.HttpRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func GetRemotes(baseUrl, apiKey string) ([]Remote, error) {
 				}
 				SetRequestHeader(req)
 
-				data, err := util.HttpRequest(req)
+				data, err := vercelkit.HttpRequest(req)
 				if err != nil {
 					return
 				}
