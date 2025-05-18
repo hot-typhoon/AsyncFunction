@@ -38,7 +38,7 @@ func HandlerBridge(w http.ResponseWriter, r *http.Request) {
 
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
-		http.Error(w, "Error while streaming response", http.StatusInternalServerError)
+		vercelkit.HttpResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 }
