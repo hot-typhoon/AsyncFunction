@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"asynclab.club/AsyncFunction/pkg/util"
+	"github.com/dsx137/go-vercel/pkg/vercelkit"
 )
 
 type QueryParams struct {
@@ -41,7 +41,7 @@ func GetMetricsFromUptime(baseUrl string, apiKey string) (string, error) {
 	}
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(":"+apiKey)))
 
-	data, err := util.HttpRequest(req)
+	data, err := vercelkit.HttpRequest(req)
 	if err != nil {
 		return "", err
 	}

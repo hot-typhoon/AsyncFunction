@@ -6,19 +6,19 @@ import (
 
 	"asynclab.club/AsyncFunction/pkg/config"
 	"asynclab.club/AsyncFunction/pkg/lib/ssh_run"
-	"asynclab.club/AsyncFunction/pkg/util"
+	"github.com/dsx137/go-vercel/pkg/vercelkit"
 	"golang.org/x/crypto/ssh"
 )
 
 func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		util.HttpResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		vercelkit.HttpResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
-	bodyParams, err := util.ReadParamsFromBody[ssh_run.BodyParams](r.Body)
+	bodyParams, err := vercelkit.ReadFrom[ssh_run.BodyParams](r.Body)
 	if err != nil {
-		util.HttpResponse(w, http.StatusBadRequest, err.Error())
+		vercelkit.HttpResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -55,12 +55,12 @@ func HandlerSSHRun(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err.(type) {
 		case *ssh_run.SSHError:
-			util.HttpResponse(w, http.StatusPreconditionFailed, err.Error())
+			vercelkit.HttpResponse(w, http.StatusPreconditionFailed, err.Error())
 		default:
-			util.HttpResponse(w, http.StatusAccepted, "Output: "+output+"; Error: "+err.Error())
+			vercelkit.HttpResponse(w, http.StatusAccepted, "Output: "+output+"; Error: "+err.Error())
 		}
 		return
 	}
 
-	util.HttpResponse(w, http.StatusOK, output)
+	vercelkit.HttpResponse(w, http.StatusOK, output)
 }

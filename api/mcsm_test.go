@@ -1,4 +1,4 @@
-package handler
+package handler_test
 
 import (
 	"net/http"
@@ -6,7 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"asynclab.club/AsyncFunction/pkg/test"
+	handler "asynclab.club/AsyncFunction/api"
+	"github.com/dsx137/go-vercel/pkg/vercelkit"
 	"github.com/joho/godotenv"
 )
 
@@ -19,5 +20,5 @@ func TestMCSM(t *testing.T) {
 	p := url.Values{}
 	p.Add("base_url", os.Getenv("MCSM_BASE_URL"))
 	p.Add("api_key", os.Getenv("MCSM_API_KEY"))
-	test.HttpTest(t, http.MethodGet, HandlerMCSM, p)
+	vercelkit.HttpTest(t, http.MethodGet, handler.HandlerMCSM, p)
 }
